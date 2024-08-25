@@ -1,13 +1,13 @@
-import {
-  Controller,
-  FieldValues,
-  SubmitHandler,
-  useForm,
-} from 'react-hook-form';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import Button from '../common/Button';
-import Input from '../common/Input';
+import Switch from '../common/Switch';
+import { FormDataType, ModeType } from '../../App';
 
-type Props = {};
+type Props = {
+  formData: FormDataType;
+  setFormData: Dispatch<SetStateAction<FormDataType>>;
+  setStep: (step: number) => void;
+};
 
 const data = [
   {
@@ -30,17 +30,8 @@ const data = [
   },
 ];
 
-const StepTwo = (props: Props) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({});
-
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
-  };
-
+const StepTwo = ({ formData, setFormData, setStep }: Props) => {
+  const monthlyMode = useMemo(() => formData.mode === 'mo', [formData]);
   return (
     <div className='py-4 min-h-full flex flex-col gap-3'>
       <h1 className='text-5xl font-semibold flex felx-col gap-10 text-marine-blue '>
@@ -49,68 +40,79 @@ const StepTwo = (props: Props) => {
       <p className='text-lg text-cool-gray mb-4'>
         You have the option of monthly or yearly billing.
       </p>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className='flex flex-col gap-8 py-6 h-full flex-1'
-        noValidate
-      >
-        <Controller
-          name='name'
-          control={control}
-          rules={{ required: 'The field is required' }}
-          render={({ field }) => {
-            return (
-              <Input
-                label='Name'
-                placeholder='e.g. Stephen King'
-                error={`${errors?.name?.message || ''}`}
-                value={field.value}
-                handleChange={(val) => {
-                  if (+val > -1) field.onChange(val);
-                }}
-              />
-            );
-          }}
-        />
 
-        <Controller
-          name='email'
-          control={control}
-          rules={{ required: 'The field is required' }}
-          render={({ field }) => (
-            <Input
-              label='Email Address'
-              type='email'
-              placeholder='e.g. stephenking@lorem.com'
-              value={field.value}
-              error={`${errors?.name?.message || ''}`}
-              handleChange={(val) => {
-                if (+val > -1) field.onChange(val);
-              }}
-            />
-          )}
-        />
-        <Controller
-          name='mobile'
-          control={control}
-          rules={{ required: 'The field is required' }}
-          render={({ field }) => (
-            <Input
-              label='Phone Number'
-              placeholder='e.g. +91 9999999999'
-              error={`${errors?.name?.message || ''}`}
-              value={field.value}
-              handleChange={(val) => {
-                if (+val > -1) field.onChange(val);
-              }}
-            />
-          )}
-        />
+      <div className='flex items-center gap-6'>
+        {data.map((item) => (
+          <div
+            className={`border rounded-xl flex flex-col items-start gap-1 p-4 w-full h-56 hover:border-purplish-blue hover:bg-pastel-blue/10 transition-all duration-300 cursor-pointer ${
+              formData.plan.title === item.title
+                ? 'border-purplish-blue bg-pastel-blue/10'
+                : 'border-light-gray'
+            } `}
+            onClick={() =>
+              setFormData((prev) => ({
+                ...prev,
+                plan: item,
+              }))
+            }
+          >
+            <div className='flex-1'>
+              <img src={item.image} alt='' />
+            </div>
+            <h1 className='text-lg font-semibold text-marine-blue'>
+              {item.title}
+            </h1>
+            <p className='text-cool-gray font-medium'>
+              ${monthlyMode ? item.priceM : item.priceY}/{formData.mode}
+            </p>
+            {!monthlyMode && (
+              <p className='font-normal text-marine-blue transition duration-300'>
+                2 months free
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
 
-        <div className='flex-1 flex items-end justify-end text-end h-full'>
-          <Button type='submit'>next Step</Button>
-        </div>
-      </form>
+      <div className='p-4 w-full flex items-center justify-center gap-6 bg-pastel-blue/10 rounded-lg mt-4 text-lg font-medium duration-300 transition'>
+        <p
+          className={`transition duration-300 ${
+            monthlyMode ? 'text-marine-blue' : 'text-cool-gray'
+          }`}
+        >
+          {ModeType.mo}
+        </p>
+        <p>
+          <Switch
+            value={!monthlyMode}
+            handleChange={(val) =>
+              setFormData((prev) => ({
+                ...prev,
+                mode: val ? 'yr' : 'mo',
+              }))
+            }
+          />
+        </p>
+        <p
+          className={`transition duration-300 ${
+            !monthlyMode ? 'text-marine-blue' : 'text-cool-gray'
+          }`}
+        >
+          {ModeType.yr}
+        </p>
+      </div>
+
+      <div className='flex-1 flex items-end justify-between text-end h-full'>
+        <p
+          className='text-lg text-cool-gray cursor-pointer hover:text-marine-blue transition duration-300'
+          onClick={() => setStep(1)}
+        >
+          Go Back
+        </p>
+        <Button type='submit' onClick={() => setStep(3)}>
+          next Step
+        </Button>
+      </div>
     </div>
   );
 };

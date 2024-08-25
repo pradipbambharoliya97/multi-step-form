@@ -1,14 +1,21 @@
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 
-type Props =
-  | HTMLButtonElement
-  | {
-      className?: string;
-    };
+type Props = {
+  type?: 'button' | 'submit' | 'reset';
+  className?: string;
+  onClick?: () => void;
+};
 
-const Button = ({ children, className = '' }: PropsWithChildren<Props>) => {
+const Button = ({
+  type,
+  children,
+  className = '',
+  onClick,
+}: PropsWithChildren<Props>) => {
   return (
     <button
+      type={type || 'button'}
+      onClick={onClick}
       className={`p-4 bg-marine-blue capitalize font-semibold text-white rounded-lg cursor-pointer hover:brightness-150 transition duration-300 ${className} `}
     >
       {children}

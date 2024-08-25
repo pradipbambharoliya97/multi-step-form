@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from 'react';
 import {
   Controller,
   FieldValues,
@@ -6,18 +7,35 @@ import {
 } from 'react-hook-form';
 import Button from '../common/Button';
 import Input from '../common/Input';
+import { FormDataType } from '../../App';
 
-type Props = {};
+type Props = {
+  formData: FormDataType;
+  setFormData: Dispatch<SetStateAction<FormDataType>>;
+  setStep: (step: number) => void;
+};
 
-const StepOne = (props: Props) => {
+const StepOne = ({ formData, setFormData, setStep }: Props) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({});
+  } = useForm({
+    defaultValues: {
+      name: formData.name,
+      email: formData.email,
+      mobile: formData.mobile,
+    },
+  });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+    setFormData((prev) => ({
+      ...prev,
+      name: data.name,
+      email: data.email,
+      mobile: data.mobile,
+    }));
+    setStep(2);
   };
 
   return (
@@ -45,7 +63,7 @@ const StepOne = (props: Props) => {
                 error={`${errors?.name?.message || ''}`}
                 value={field.value}
                 handleChange={(val) => {
-                  if (+val > -1) field.onChange(val);
+                  field.onChange(val);
                 }}
               />
             );
@@ -62,9 +80,9 @@ const StepOne = (props: Props) => {
               type='email'
               placeholder='e.g. stephenking@lorem.com'
               value={field.value}
-              error={`${errors?.name?.message || ''}`}
+              error={`${errors?.email?.message || ''}`}
               handleChange={(val) => {
-                if (+val > -1) field.onChange(val);
+                field.onChange(val);
               }}
             />
           )}
@@ -77,7 +95,7 @@ const StepOne = (props: Props) => {
             <Input
               label='Phone Number'
               placeholder='e.g. +91 9999999999'
-              error={`${errors?.name?.message || ''}`}
+              error={`${errors?.mobile?.message || ''}`}
               value={field.value}
               handleChange={(val) => {
                 if (+val > -1) field.onChange(val);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 type Props = {
   label: string;
-  value: string | number;
+  value?: string | number;
   type?: string;
   error: string | undefined;
   placeholder?: string;
