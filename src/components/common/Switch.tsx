@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 type Props = {
   value: boolean;
   handleChange: (e: boolean) => void;
@@ -15,4 +17,4 @@ const Switch = ({ value, handleChange }: Props) => (
   </label>
 );
 
-export default Switch;
+export default memo(Switch);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
 type Props = {
   label: string;
@@ -6,7 +6,7 @@ type Props = {
   type?: string;
   error: string | undefined;
   placeholder?: string;
-  handleChange: (val: number | string) => void;
+  handleChange: (val: string) => void;
 };
 
 const Input = ({
@@ -39,11 +39,11 @@ const Input = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           onChange={(e) => handleChange(e.target.value)}
-          className='p-4 w-full outline-none peer'
+          className='p-3 md:p-4 w-full outline-none peer'
         />
       </div>
     </div>
   );
 };
 
-export default Input;
+export default memo(Input);

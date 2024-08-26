@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { memo, PropsWithChildren } from 'react';
 
 type Props = {
   type?: 'button' | 'submit' | 'reset';
@@ -23,4 +23,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default memo(Button);

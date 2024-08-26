@@ -1,18 +1,19 @@
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, memo, SetStateAction, useMemo } from 'react';
+import { FormDataType, ModeType } from '../../utils/type';
 import Button from '../common/Button';
-import { FormDataType, ModeType } from '../../App';
+import TitleBar from '../common/TitleBar';
 import StepFive from './StepFive';
 
 type Props = {
   formData: FormDataType;
   setFormData: Dispatch<SetStateAction<FormDataType>>;
   setStep: (step: number) => void;
+  confirmed: boolean;
+  setConfirmed: Dispatch<SetStateAction<boolean>>;
 };
 
-const StepFour = ({ formData, setStep }: Props) => {
-  const [confirmed, setConfirmed] = useState(false);
+const StepFour = ({ formData, setStep, confirmed, setConfirmed }: Props) => {
   const monthlyMode = useMemo(() => formData.mode === 'mo', [formData]);
-
   const totalBill = useMemo(() => {
     const basic = monthlyMode ? formData.plan.priceM : formData.plan.priceY;
     const totalAddOns = Array.from(formData.addOns).reduce((a, c) => {
@@ -30,12 +31,12 @@ const StepFour = ({ formData, setStep }: Props) => {
 
   return (
     <div className='py-4 min-h-full flex flex-col gap-3'>
-      <h1 className='text-5xl font-semibold flex felx-col gap-10 text-marine-blue '>
-        Finishing up
-      </h1>
-      <p className='text-lg text-cool-gray mb-4'>
-        Double-check everything looks OK before confirming.
-      </p>
+      <TitleBar
+        {...{
+          title: 'Finishing up',
+          subTitle: 'Double-check everything looks OK before confirming.',
+        }}
+      />
       <div className='bg-pastel-blue/10 p-6 rounded-md text-lg'>
         <div className='flex items-center gap-5'>
           <div className='flex-1'>
@@ -43,7 +44,10 @@ const StepFour = ({ formData, setStep }: Props) => {
               {formData.plan.title} (
               {ModeType[formData.mode as keyof typeof ModeType]})
             </p>
-            <span className='text-cool-gray underline hover:text-purplish-blue cursor-pointer transition duration-300'>
+            <span
+              className='text-cool-gray underline hover:text-purplish-blue cursor-pointer transition duration-300'
+              onClick={() => setStep(2)}
+            >
               Change
             </span>
           </div>
@@ -76,7 +80,7 @@ const StepFour = ({ formData, setStep }: Props) => {
         </p>
       </div>
 
-      <div className='flex-1 flex items-end justify-between text-end h-full'>
+      <div className='flex-1 hidden md:flex items-end justify-between text-end h-full'>
         <p
           className='text-lg text-cool-gray cursor-pointer hover:text-marine-blue transition duration-300'
           onClick={() => setStep(3)}
@@ -95,4 +99,4 @@ const StepFour = ({ formData, setStep }: Props) => {
   );
 };
 
-export default StepFour;
+export default memo(StepFour);
